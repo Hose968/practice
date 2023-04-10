@@ -7,21 +7,10 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - hazelcast-1
-      - hazelcast-2
-      - hazelcast-3
       - logging-service-1
       - logging-service-2
       - logging-service-3
       - messages-service
-    networks:
-      - hazelcast-cluster
-
-  messages-service:
-    build:
-      context: ./messages-service
-    ports:
-      - "5004:5002"
     networks:
       - hazelcast-cluster
 
@@ -55,49 +44,48 @@ services:
       - hazelcast-cluster
 
   logging-service-1:
-    build: ./logging-service
+    build:
+      context: ./logging-service
     environment:
-      HAZELCAST_NODE_ADDRESS: hazelcast-1
-    ports:
-      - "5001:5001"
+      HAZELCAST_NODE_ADDRESS: "hazelcast-1:5701"
     depends_on:
       - hazelcast-1
+    ports:
+      - "5001:5001"
     networks:
       - hazelcast-cluster
 
   logging-service-2:
-    build: ./logging-service
+    build:
+      context: ./logging-service
     environment:
-      HAZELCAST_NODE_ADDRESS: hazelcast-2
-    ports:
-      - "5002:5001"
+      HAZELCAST_NODE_ADDRESS: "hazelcast-2:5701"
     depends_on:
       - hazelcast-2
+    ports:
+      - "5002:5001"
     networks:
       - hazelcast-cluster
 
   logging-service-3:
-    build: ./logging-service
+    build:
+      context: ./logging-service
     environment:
-      HAZELCAST_NODE_ADDRESS: hazelcast-3
-    ports:
-      - "5003:5001"
+      HAZELCAST_NODE_ADDRESS: "hazelcast-3:5701"
     depends_on:
       - hazelcast-2
+    ports:
+      - "5003:5001"
+    networks:
+      - hazelcast-cluster
+
+  messages-service:
+    build:
+      context: ./messages-service
+    ports:
+      - "5004:5002"
     networks:
       - hazelcast-cluster
 
 networks:
   hazelcast-cluster:
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,41 +1,38 @@
 from flask import Flask, jsonify, request
 import requests
 from bson import ObjectId
-import random
+from random import choice
 
 app = Flask(__name__)
 
-logging_service_urls = ['http://logging-service-1:5001/',
-                        'http://logging-service-2:5002/',
-                        'http://logging-service-3:5003/']
-messages_service_url = 'http://messages-service:5004/'
+logging_service_url = ['http://logging-service-1:5001/',
+                       'http://logging-service-2:5001/',
+                       'http://logging-service-3:5001/']
+messages_service_url = 'http://messages-service:5002/'
 
 
 @app.route('/', methods=['POST'])
 def log():
     log_message = request.json['message']
-    message = {"id": str(ObjectId()), "text": log_message}
+    message = {str(ObjectId()): log_message}
 
-    logging_service_url = random.choice(logging_service_urls)
+    with requests.Session() as sess:
+        response = sess.post(choice(logging_service_url), json=message)
 
-    print(logging_service_url)
-
-    requests.post(logging_service_url, data=message)
-
-    return jsonify({'status': 'success'})
+    return jsonify(response.json())
 
 
 @app.route('/', methods=['GET'])
 def get_messages():
+    with requests.Session() as sess:
+        mes_response = sess.get(messages_service_url)
 
-    logging_service_url = random.choice(logging_service_urls)
-    # print(logging_service_url+"\n\n")
-
-    mes_response = requests.get(messages_service_url)
-    log_response = requests.get(logging_service_url)
+    with requests.Session() as sess:
+        log_response = sess.get(choice(logging_service_url))
 
     answ = dict()
-    answ['message-service'] = mes_response.json()
+
+    answ['messages-service'] = mes_response.json()
     answ['logging-service'] = log_response.json()
 
     return jsonify(answ)
