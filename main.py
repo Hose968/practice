@@ -62,6 +62,8 @@ def main(argv):
             ret = post_messages()
         else:
             ret = post_messages(message)
+    else:
+        print(f"[-] Not implemented method: {method}")
 
     print(f"Answer is: {ret}")
 
