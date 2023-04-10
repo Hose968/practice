@@ -9,9 +9,9 @@ help_message = '''
     -h           print this help message and exit           | OPTIONAL
     -m/--method  [GET, POST] method for testing             | REQUIRED
     -t/--text    text of message to insert for POST method  | REQUIRED/OPTIONAL
+    -n/--number  count of POST requests                     | OPTIONAL
     
 '''
-
 
 
 def get_messages() -> str:
@@ -20,24 +20,27 @@ def get_messages() -> str:
     return str(ret)
 
 
-def post_messages(message: str = "base message") -> str:
+def post_messages(message: str = "base message", count: int = 1) -> str:
     header = {
         "Content-Type": "application/json"
     }
-    body = json.dumps({"message": message})
-    resp = requests.post('http://127.0.0.1:5000/', headers=header, data=body)
-    ret = resp.json()["status"]
+    ret = list
+    for i in range(count):
+        body = json.dumps({"message": message})
+        resp = requests.post('http://127.0.0.1:5000/', headers=header, data=body)
+        ret.append(resp.json())
 
-    return str(ret)
+    return ret
 
 
 def main(argv):
     method = None
     message = 'test message'
+    count = 1
     ret = ""
 
     try:
-        opts, args = getopt.getopt(argv, "hm:t:", ['help', 'method=', 'text='])
+        opts, args = getopt.getopt(argv, "hm:t:n:", ['help', 'method=', 'text=', 'number='])
     except getopt.GetoptError as e:
         print(f"Argument Error, reason: {e}")
         sys.exit(1)
@@ -50,6 +53,8 @@ def main(argv):
             method = arg.upper()
         elif opt in ('-t', '--text'):
             message = arg
+        elif opt in ('-n', '--number'):
+            count = int(arg)
         else:
             print(f'unknown option {opt}')
             print(help_message)
@@ -59,9 +64,9 @@ def main(argv):
         ret = get_messages()
     elif method == "POST":
         if message is None:
-            ret = post_messages()
+            ret = post_messages(count=count)
         else:
-            ret = post_messages(message)
+            ret = post_messages(message, count=count)
     else:
         print(f"[-] Not implemented method: {method}")
 
