@@ -8,10 +8,9 @@ messages = {}
 @app.route('/', methods=['POST'])
 def log():
     log_message = request.json
-    for i in log_message.keys():
-        messages[i] = log_message[i]
-        print(log_message[i])
-    return jsonify({'status': 'success'})
+    messages[log_message['id']] = log_message['message']
+
+    return jsonify({'status': 'success', "message": log_message['message']})
 
 
 @app.route('/', methods=['GET'])
@@ -19,7 +18,7 @@ def get_messages():
     answ = list()
     for i in messages.keys():
         answ.append(messages[i])
-    return jsonify({"message": ', '.join(answ)})
+    return jsonify({"message": answ})
 
 
 if __name__ == '__main__':

@@ -10,7 +10,8 @@ def get_messages():
 
 @app.route('/', methods=['POST'])
 def post_messages():
-    return jsonify({'status': 'success'})
+    return jsonify({'status': 'success', "message": "This is a static message"})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)

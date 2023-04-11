@@ -2,6 +2,7 @@ import sys
 import requests
 import getopt
 import json
+from pprint import pprint
 
 help_message = '''
     script to test microservice lab
@@ -13,22 +14,21 @@ help_message = '''
 '''
 
 
-
-def get_messages() -> str:
+def get_messages() -> dict:
     resp = requests.get("http://127.0.0.1:5000/")
-    ret = resp.json()["message"]
-    return str(ret)
+    ret = resp.json()
+    return ret
 
 
-def post_messages(message: str = "base message") -> str:
+def post_messages(message: str = "base message") -> dict:
     header = {
         "Content-Type": "application/json"
     }
     body = json.dumps({"message": message})
     resp = requests.post('http://127.0.0.1:5000/', headers=header, data=body)
-    ret = resp.json()["status"]
+    ret = resp.json()
 
-    return str(ret)
+    return ret
 
 
 def main(argv):
@@ -63,7 +63,10 @@ def main(argv):
         else:
             ret = post_messages(message)
 
-    print(f"Answer is: {ret}")
+    print("Answer is:\n")
+    pprint(ret)
+
+    sys.exit(0)
 
 
 if __name__ == '__main__':
