@@ -32,4 +32,14 @@ $ python3 main.py -h
     -h           print this help message and exit           | OPTIONAL
     -m/--method  [GET, POST] method for testing             | REQUIRED
     -t/--text    text of message to insert for POST method  | REQUIRED/OPTIONAL
+    -n/--number  count of POST requests                     | OPTIONAL
+```
+
+**example of usage [POST]:**
+```shell
+$ python3 main.py -m post -t "test message" -n 10
+```
+**example of usage [GET]:**
+```shell
+$ python3 main.py -m get
 ```

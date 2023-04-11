@@ -75,6 +75,7 @@ def main(argv):
             ret = post_messages(message, count=count)
     else:
         print(f"[-] Not implemented method: {method}")
+        sys.exit(1)
 
     print("Answer is: ")
     pprint(ret)
