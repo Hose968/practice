@@ -20,7 +20,7 @@ $ sudo docker compose up
 
 after start `docker compose` run `main.py`:
 ```shell
-$ python3 main.py -m/--method [-t/--text 'text message']
+$ python3 main.py -m/--method [-t/--text = 'text message'] [-n/--number = 1]
 ```
 
 **main.py usage:**
