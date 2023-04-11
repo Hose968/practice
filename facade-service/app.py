@@ -15,15 +15,26 @@ messages_service_url = 'http://messages-service:5002/'
 def log():
     log_message = request.json['message']
     message = {str(ObjectId()): log_message}
-
+    log_response = None
     output = dict()
-    logg_service = choice(logging_service_url)
+    logg_service = None
 
     with requests.Session() as sess:
-        response = sess.post(logg_service, json=message)
+        mes_response = sess.post(messages_service_url, json=message)
+
+    while not log_response:
+        logg_service = choice(logging_service_url)
+
+        try:
+            with requests.Session() as sess:
+                log_response = sess.post(logg_service, json=message)
+        except Exception as e:
+            print(f"Unable to connect to {logg_service}, reason = {e.__class__.__name__} : {e}")
+            continue
 
     output['logger'] = logg_service
-    output['response'] = response.json()
+    output['logger_response'] = log_response.json()
+    output['message-service-response'] = mes_response.json()
 
     return jsonify(output)
 
@@ -32,16 +43,24 @@ def log():
 def get_messages():
     answ = dict()
     output = dict()
-    logg_service = choice(logging_service_url)
+    logg_service = None
+    log_response = None
 
     with requests.Session() as sess:
         mes_response = sess.get(messages_service_url)
 
-    with requests.Session() as sess:
-        log_response = sess.get(logg_service)
+    while not log_response:
+        logg_service = choice(logging_service_url)
 
-    answ['messages-service'] = mes_response.json()
-    answ['logging-service'] = log_response.json()
+        try:
+            with requests.Session() as sess:
+                log_response = sess.get(logg_service)
+        except Exception as e:
+            print(f"Unable to connect to {logg_service}, reason = {e.__class__.__name__} : {e}")
+            continue
+
+    answ['messages-service-response'] = mes_response.json()
+    answ['logging-service-response'] = log_response.json()
 
     output['logger'] = logg_service
     output['get-response'] = answ

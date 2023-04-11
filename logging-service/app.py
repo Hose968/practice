@@ -4,8 +4,6 @@ import os
 
 app = Flask(__name__)
 
-# messages = {}
-
 hazelcast_node_address = os.environ.get('HAZELCAST_NODE_ADDRESS')
 client = HazelcastClient(cluster_members=[hazelcast_node_address])
 messages = client.get_map('messages').blocking()

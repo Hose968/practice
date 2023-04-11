@@ -2,6 +2,7 @@ import sys
 import requests
 import getopt
 import json
+from pprint import pprint
 
 help_message = '''
     script to test microservice lab
@@ -14,21 +15,26 @@ help_message = '''
 '''
 
 
-def get_messages() -> str:
+def get_messages() -> dict:
     resp = requests.get("http://127.0.0.1:5000/")
-    ret = resp.json()["message"]
-    return str(ret)
+    ret = resp.json()
+    return ret
 
 
-def post_messages(message: str = "base message", count: int = 1) -> str:
+def post_messages(message: str = "base message", count: int = 1) -> list:
     header = {
         "Content-Type": "application/json"
     }
-    ret = list
+
+    ret = list()
+    iterator = 0
+
     for i in range(count):
-        body = json.dumps({"message": message})
+        text = f"{message}_{str(iterator)}"
+        body = json.dumps({"message": text})
         resp = requests.post('http://127.0.0.1:5000/', headers=header, data=body)
         ret.append(resp.json())
+        iterator += 1
 
     return ret
 
@@ -70,7 +76,10 @@ def main(argv):
     else:
         print(f"[-] Not implemented method: {method}")
 
-    print(f"Answer is: {ret}")
+    print("Answer is: ")
+    pprint(ret)
+
+    sys.exit(0)
 
 
 if __name__ == '__main__':
